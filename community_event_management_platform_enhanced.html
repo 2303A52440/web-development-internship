@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#534AB7">
+<meta name="description" content="EventHub — Community Event Management Platform">
+<link rel="manifest" href="#" id="manifestLink">
+<title>EventHub — Community Events</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.3.0/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#534AB7;--purple-light:#EEEDFE;--purple-dark:#3C3489;
+  --teal:#1D9E75;--teal-light:#E1F5EE;
+  --coral:#D85A30;--coral-light:#FAECE7;
+  --amber:#BA7517;--amber-light:#FAEEDA;
+  --blue:#2563EB;--blue-light:#EFF6FF;
+  --bg:#F8F7FF;--bg2:#fff;--bg3:#F3F2FB;
+  --border:#E4E2F8;--border2:#D1CEEF;
+  --text:#1A1830;--text2:#6B6892;--text3:#9896B8;
+  --radius:10px;--radius-lg:14px;--radius-xl:20px;
+  --shadow:0 1px 4px rgba(83,74,183,.08),0 4px 16px rgba(83,74,183,.06);
+  --shadow-lg:0 4px 24px rgba(83,74,183,.13);
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+.app{display:flex;flex-direction:column;min-height:100vh}
+
+/* NAV */
+nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:1rem;height:56px;position:sticky;top:0;z-index:50;box-shadow:0 1px 0 var(--border)}
+.nav-logo{font-size:16px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:7px;flex:1;letter-spacing:-.3px}
+.nav-logo i{font-size:20px}
+.nav-tabs{display:flex;gap:2px}
+.nav-tab{padding:6px 13px;border:none;background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;border-radius:8px;transition:all .15s;display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif}
+.nav-tab:hover{background:var(--bg3);color:var(--text)}
+.nav-tab.active{background:var(--purple-light);color:var(--purple)}
+.nav-actions{display:flex;gap:8px;align-items:center}
+.nav-user{width:32px;height:32px;border-radius:50%;background:var(--purple-light);color:var(--purple);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;border:2px solid var(--purple-light);transition:.15s}
+.nav-user:hover{border-color:var(--purple)}
+
+/* BUTTONS */
+.btn{padding:7px 15px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--text);transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;white-space:nowrap}
+.btn:hover{background:var(--bg3);border-color:var(--border2)}
+.btn-primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn-primary:hover{background:var(--purple-dark);border-color:var(--purple-dark)}
+.btn-success{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn-success:hover{background:#157A5B;border-color:#157A5B}
+.btn-sm{padding:5px 11px;font-size:12px;border-radius:7px}
+.btn-danger{background:var(--coral-light);color:var(--coral);border-color:#F0997B}
+.btn-danger:hover{background:#F8D5C8}
+.btn-icon{padding:7px;width:34px;height:34px;justify-content:center}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.01em}
+.badge-purple{background:var(--purple-light);color:var(--purple)}
+.badge-teal{background:var(--teal-light);color:#0F6E56}
+.badge-coral{background:var(--coral-light);color:#993C1D}
+.badge-amber{background:var(--amber-light);color:#854F0B}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+
+/* PAGES */
+.page{display:none;padding:1.5rem;max-width:1140px;margin:0 auto;width:100%}
+.page.active{display:block}
+
+/* SECTION */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.section-title{font-size:17px;font-weight:600;letter-spacing:-.2px}
+.section-sub{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* GRID */
+.grid-3{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1rem}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:1.5rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* METRIC CARD */
+.metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem 1rem}
+.metric-label{font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.metric-value{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1}
+.metric-delta{font-size:11px;margin-top:5px;display:flex;align-items:center;gap:3px}
+.metric-delta.up{color:var(--teal)}
+.metric-delta.down{color:var(--coral)}
+.metric-value.purple{color:var(--purple)}
+.metric-value.teal{color:var(--teal)}
+.metric-value.coral{color:var(--coral)}
+.metric-value.amber{color:var(--amber)}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.card-pad{padding:1.1rem}
+
+/* EVENT CARD */
+.event-banner{height:110px;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative}
+.event-banner .paid-badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px;letter-spacing:.03em}
+.event-body{padding:1rem}
+.event-title{font-size:14px;font-weight:600;margin-bottom:5px;line-height:1.3}
+.event-meta{font-size:12px;color:var(--text2);display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.event-meta span{display:flex;align-items:center;gap:5px}
+.event-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.capacity-bar{background:var(--bg3);border-radius:99px;height:4px;margin:8px 0}
+.capacity-fill{height:4px;border-radius:99px;background:var(--purple);transition:width .4s}
+
+/* SIDEBAR LAYOUT */
+.sidebar-layout{display:grid;grid-template-columns:230px 1fr;gap:1.25rem}
+.sidebar{display:flex;flex-direction:column;gap:10px}
+.filter-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem}
+.filter-title{font-size:11px;font-weight:600;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+.filter-option{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:13px;cursor:pointer;border-radius:6px;transition:.1s}
+.filter-option:hover{color:var(--purple)}
+.filter-option input{accent-color:var(--purple)}
+
+/* SEARCH */
+.search-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:1rem;transition:.15s}
+.search-bar:focus-within{border-color:var(--purple);box-shadow:0 0 0 3px rgba(83,74,183,.12)}
+.search-bar input{border:none;background:transparent;outline:none;flex:1;font-size:13px;color:var(--text);font-family:'Inter',sans-serif}
+.search-bar i{color:var(--text3);font-size:16px}
+
+/* MODAL */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(20,16,60,.45);z-index:100;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(2px)}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--bg2);border-radius:var(--radius-xl);border:1px solid var(--border);width:500px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{padding:1.25rem 1.25rem .75rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.modal-title{font-size:15px;font-weight:600}
+.modal-body{padding:1.25rem}
+
+/* FORM */
+.form-group{margin-bottom:1rem}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:block;font-weight:500}
+.form-control{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;outline:none;font-family:'Inter',sans-serif;transition:.15s}
+.form-control:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(83,74,183,.12)}
+select.form-control{cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* STARS */
+.star-row{display:flex;gap:4px;margin:4px 0}
+.star{font-size:22px;cursor:pointer;color:var(--border2);transition:color .1s}
+.star.lit{color:#EF9F27}
+
+/* NOTIFICATIONS */
+.notif-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.notif-item:last-child{border-bottom:none}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);margin-top:5px;flex-shrink:0}
+.notif-dot.read{background:var(--border2)}
+.notif-text{font-size:13px;color:var(--text)}
+.notif-time{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* CALENDAR */
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-head{font-size:11px;color:var(--text3);text-align:center;padding:5px;font-weight:600}
+.cal-day{min-height:64px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:5px;font-size:12px;transition:.15s}
+.cal-day:hover{border-color:var(--purple-dark);cursor:pointer}
+.cal-day.today{border-color:var(--purple);background:var(--purple-light)}
+.cal-day.other-month{opacity:.35}
+.cal-event{background:var(--purple-light);color:var(--purple);font-size:10px;padding:1px 5px;border-radius:4px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.cal-event.paid{background:var(--amber-light);color:var(--amber)}
+
+/* TABS */
+.tab-bar{display:flex;gap:3px;margin-bottom:1.25rem;background:var(--bg3);padding:3px;border-radius:10px;width:fit-content;border:1px solid var(--border)}
+.tab{padding:6px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif}
+.tab.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid var(--border)}
+
+/* LIST ITEMS */
+.list-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.list-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.list-info{flex:1;min-width:0}
+.list-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-sub{font-size:11px;color:var(--text2);margin-top:1px}
+
+/* AVATAR */
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--purple-light);color:var(--purple);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+
+/* PROFILE */
+.profile-avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#7C6FD4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;flex-shrink:0;box-shadow:0 4px 16px rgba(83,74,183,.3)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.85rem 1.1rem;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;z-index:300;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* PAYMENT */
+.payment-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.pay-method{border:1px solid var(--border);border-radius:9px;padding:10px;text-align:center;cursor:pointer;transition:.15s;font-size:12px;font-weight:500;color:var(--text2)}
+.pay-method:hover,.pay-method.active{border-color:var(--purple);background:var(--purple-light);color:var(--purple)}
+.pay-method i{font-size:20px;display:block;margin-bottom:4px}
+
+/* CERTIFICATE */
+.cert-preview{background:linear-gradient(135deg,#1A1040 0%,#2D1B69 50%,#1A1040 100%);border-radius:16px;padding:2.5rem 2rem;color:#fff;text-align:center;position:relative;overflow:hidden;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cert-preview::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.cert-seal{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#EF9F27,#F5C842);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:26px;box-shadow:0 4px 16px rgba(239,159,39,.4)}
+.cert-title{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:.5rem}
+.cert-name{font-size:22px;font-weight:700;margin-bottom:.5rem;letter-spacing:-.3px}
+.cert-event{font-size:14px;color:rgba(255,255,255,.8);margin-bottom:1rem}
+.cert-border{position:absolute;inset:8px;border:1px solid rgba(255,255,255,.15);border-radius:12px;pointer-events:none}
+
+/* ANALYTICS */
+.chart-container{position:relative;height:200px;margin-top:.5rem}
+.analytics-table{width:100%;border-collapse:collapse;font-size:12px}
+.analytics-table th{font-size:11px;font-weight:600;color:var(--text2);padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;text-transform:uppercase;letter-spacing:.05em}
+.analytics-table td{padding:8px;border-bottom:1px solid var(--border);font-size:12px}
+.analytics-table tr:last-child td{border-bottom:none}
+.analytics-table tr:hover td{background:var(--bg3)}
+
+/* PWA BANNER */
+.pwa-banner{background:linear-gradient(135deg,var(--purple),#7C6FD4);color:#fff;border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;cursor:pointer;transition:.15s}
+.pwa-banner:hover{opacity:.9}
+.pwa-banner i{font-size:28px;flex-shrink:0}
+.pwa-banner-text{flex:1}
+.pwa-banner-title{font-size:14px;font-weight:600;margin-bottom:2px}
+.pwa-banner-sub{font-size:12px;opacity:.8}
+
+/* PROGRESS */
+.progress-mini{height:6px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-top:5px}
+.progress-fill{height:100%;border-radius:99px;background:var(--purple);transition:width .5s}
+
+/* ATTENDANCE */
+.attendance-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.attendance-row:last-child{border-bottom:none}
+.check-btn{width:24px;height:24px;border-radius:6px;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.check-btn.checked{background:var(--teal);border-color:var(--teal);color:#fff}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text3)}
+.empty-state i{font-size:40px;margin-bottom:.75rem;display:block}
+.empty-state p{font-size:14px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar-layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .grid-2{grid-template-columns:1fr}
+  .nav-tabs .nav-tab span{display:none}
+  .form-row{grid-template-columns:1fr}
+}
+
+/* PWA offline indicator */
+.offline-bar{background:#D85A30;color:#fff;text-align:center;padding:6px;font-size:12px;font-weight:500;display:none}
+.offline-bar.show{display:block}
+</style>
+</head>
+<body>
+<div class="offline-bar" id="offlineBar">You're offline — some features may be unavailable</div>
+<div class="app">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><i class="ti ti-calendar-event"></i> EventHub</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('browse')"><i class="ti ti-layout-grid"></i> <span>Browse</span></button>
+    <button class="nav-tab" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i> <span>Dashboard</span></button>
+    <button class="nav-tab" onclick="showPage('analytics')"><i class="ti ti-chart-dots"></i> <span>Analytics</span></button>
+    <button class="nav-tab" onclick="showPage('calendar')"><i class="ti ti-calendar"></i> <span>Calendar</span></button>
+    <button class="nav-tab" onclick="showPage('notifs')"><i class="ti ti-bell"></i> <span>Alerts</span></button>
+    <button class="nav-tab" onclick="showPage('profile')"><i class="ti ti-user"></i> <span>Profile</span></button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-primary btn-sm" onclick="openModal('createEvent')"><i class="ti ti-plus"></i> New Event</button>
+    <div class="nav-user" onclick="showPage('profile')">AS</div>
+  </div>
+</nav>
+
+<div style="flex:1">
+
+<!-- BROWSE PAGE -->
+<div id="page-browse" class="page active">
+  <div id="pwaBanner" class="pwa-banner" onclick="installPWA()">
+    <i class="ti ti-device-mobile"></i>
+    <div class="pwa-banner-text">
+      <div class="pwa-banner-title">Install EventHub on your device</div>
+      <div class="pwa-banner-sub">Get instant access, offline browsing, and push notifications</div>
+    </div>
+    <button class="btn btn-sm" style="background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.3);color:#fff;flex-shrink:0">Install app</button>
+    <button class="btn btn-icon btn-sm" style="background:transparent;border-color:transparent;color:rgba(255,255,255,.7)" onclick="dismissPWA(event)"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="sidebar-layout">
+    <aside class="sidebar">
+      <div class="filter-card">
+        <div class="filter-title">Category</div>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Technology</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Education</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Business</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Sports</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Arts</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Networking</label>
+      </div>
+      <div class="filter-card">
+        <div class="filter-title">Entry</div>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()" id="fFree"> Free</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()" id="fPaid"> Paid</label>
+      </div>
+      <div class="filter-card">
+        <div class="filter-title">Date</div>
+        <label class="filter-option"><input type="radio" name="date" value="all" checked> All upcoming</label>
+        <label class="filter-option"><input type="radio" name="date" value="week"> This week</label>
+        <label class="filter-option"><input type="radio" name="date" value="month"> This month</label>
+      </div>
+      <div class="filter-card">
+        <div class="filter-title">Sort by</div>
+        <select class="form-control" style="font-size:13px" onchange="filterEvents()">
+          <option>Date (soonest)</option>
+          <option>Popularity</option>
+          <option>Rating</option>
+          <option>Price (low–high)</option>
+        </select>
+      </div>
+    </aside>
+    <div>
+      <div class="search-bar">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Search events, organizers, topics…" oninput="filterEvents()" id="searchInput">
+      </div>
+      <div id="eventGrid" class="grid-3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div id="page-dashboard" class="page">
+  <div class="tab-bar">
+    <button class="tab active" id="orgTab" onclick="switchDash('org')">Organizer view</button>
+    <button class="tab" id="partTab" onclick="switchDash('part')">Participant view</button>
+  </div>
+  <div id="dash-org">
+    <div class="grid-4">
+      <div class="metric-card">
+        <div class="metric-label">Events created</div>
+        <div class="metric-value purple">12</div>
+        <div class="metric-delta up"><i class="ti ti-trending-up" style="font-size:12px"></i> +2 this month</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Active events</div>
+        <div class="metric-value teal">5</div>
+        <div class="metric-delta up"><i class="ti ti-trending-up" style="font-size:12px"></i> On track</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total registrations</div>
+        <div class="metric-value amber">347</div>
+        <div class="metric-delta up"><i class="ti ti-trending-up" style="font-size:12px"></i> +28 this week</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Revenue (INR)</div>
+        <div class="metric-value coral">₹48,500</div>
+        <div class="metric-delta up"><i class="ti ti-trending-up" style="font-size:12px"></i> +₹8,200</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card card-pad">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Active events</div>
+        <div id="orgEventList"></div>
+      </div>
+      <div class="card card-pad">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Recent feedback</div>
+        <div id="feedbackList"></div>
+      </div>
+    </div>
+    <div class="card card-pad" style="margin-top:1rem">
+      <div class="section-header" style="margin-bottom:.75rem">
+        <div class="section-title" style="font-size:15px">Attendance management</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm" onclick="exportAttendance()"><i class="ti ti-download"></i> Export CSV</button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('certificate')"><i class="ti ti-certificate"></i> Issue certificates</button>
+        </div>
+      </div>
+      <div id="attendanceList"></div>
+    </div>
+  </div>
+  <div id="dash-part" style="display:none">
+    <div class="grid-4">
+      <div class="metric-card"><div class="metric-label">Registered</div><div class="metric-value purple">8</div><div class="metric-delta up">Active events</div></div>
+      <div class="metric-card"><div class="metric-label">Attended</div><div class="metric-value teal">5</div><div class="metric-delta up">+1 this week</div></div>
+      <div class="metric-card"><div class="metric-label">Upcoming</div><div class="metric-value amber">3</div><div class="metric-delta">Next: Jun 20</div></div>
+      <div class="metric-card"><div class="metric-label">Certificates</div><div class="metric-value coral">2</div><div class="metric-delta up">Download ready</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card card-pad">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Upcoming events</div>
+        <div id="partUpcoming"></div>
+      </div>
+      <div class="card card-pad">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Event history &amp; certificates</div>
+        <div id="partHistory"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ANALYTICS PAGE -->
+<div id="page-analytics" class="page">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Analytics</div>
+      <div class="section-sub">June 2026 · Organizer dashboard</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <select class="form-control btn-sm" style="width:auto">
+        <option>Last 30 days</option><option>Last 3 months</option><option>Last year</option>
+      </select>
+      <button class="btn btn-sm" onclick="exportAnalytics()"><i class="ti ti-download"></i> Export</button>
+    </div>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:1.5rem">
+    <div class="metric-card">
+      <div class="metric-label">Page views</div>
+      <div class="metric-value purple">12,847</div>
+      <div class="metric-delta up"><i class="ti ti-trending-up" style="font-size:12px"></i> +18.4% vs last month</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Conversion rate</div>
+      <div class="metric-value teal">34.2%</div>
+      <div class="metric-delta up"><i class="ti ti-trending-up" style="font-size:12px"></i> +2.1%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total revenue</div>
+      <div class="metric-value amber">₹48,500</div>
+      <div class="metric-delta up"><i class="ti ti-trending-up" style="font-size:12px"></i> +20%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Avg. satisfaction</div>
+      <div class="metric-value coral">4.7 ★</div>
+      <div class="metric-delta up"><i class="ti ti-trending-up" style="font-size:12px"></i> +0.2</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem">
+    <div class="card card-pad">
+      <div class="section-title" style="font-size:14px;margin-bottom:.25rem">Registrations over time</div>
+      <div class="section-sub" style="margin-bottom:.75rem">Daily sign-ups for June 2026</div>
+      <div class="chart-container"><canvas id="regChart"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="section-title" style="font-size:14px;margin-bottom:.25rem">Revenue by category</div>
+      <div class="section-sub" style="margin-bottom:.75rem">Paid event revenue breakdown</div>
+      <div class="chart-container"><canvas id="revChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem">
+    <div class="card card-pad">
+      <div class="section-title" style="font-size:14px;margin-bottom:.25rem">Category popularity</div>
+      <div class="section-sub" style="margin-bottom:.75rem">Registrations per category</div>
+      <div class="chart-container"><canvas id="catChart"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="section-title" style="font-size:14px;margin-bottom:.25rem">Attendee satisfaction</div>
+      <div class="section-sub" style="margin-bottom:.75rem">Rating distribution across events</div>
+      <div class="chart-container"><canvas id="satChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card card-pad">
+    <div class="section-title" style="font-size:14px;margin-bottom:1rem">Event performance table</div>
+    <table class="analytics-table">
+      <thead>
+        <tr>
+          <th>Event</th><th>Category</th><th>Registrations</th><th>Capacity</th><th>Fill rate</th><th>Revenue</th><th>Rating</th>
+        </tr>
+      </thead>
+      <tbody id="analyticsTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CALENDAR PAGE -->
+<div id="page-calendar" class="page">
+  <div class="section-header">
+    <div class="section-title">June 2026</div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-sm"><i class="ti ti-chevron-left"></i></button>
+      <button class="btn btn-sm btn-primary">Today</button>
+      <button class="btn btn-sm"><i class="ti ti-chevron-right"></i></button>
+    </div>
+  </div>
+  <div class="card" style="padding:1rem">
+    <div class="calendar-grid">
+      <div class="cal-head">Sun</div><div class="cal-head">Mon</div><div class="cal-head">Tue</div><div class="cal-head">Wed</div><div class="cal-head">Thu</div><div class="cal-head">Fri</div><div class="cal-head">Sat</div>
+    </div>
+    <div class="calendar-grid" id="calGrid" style="margin-top:4px"></div>
+  </div>
+  <div style="margin-top:1rem">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem">
+      <div class="section-title" style="font-size:15px">Upcoming this month</div>
+      <span class="badge badge-purple">8 events</span>
+    </div>
+    <div id="upcomingList"></div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS PAGE -->
+<div id="page-notifs" class="page">
+  <div class="section-header">
+    <div class="section-title">Notifications</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="markAllRead()">Mark all read</button>
+      <button class="btn btn-sm"><i class="ti ti-settings"></i> Preferences</button>
+    </div>
+  </div>
+  <div class="card" style="padding:0 1rem" id="notifList"></div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="page-profile" class="page">
+  <div style="display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:1.5rem">
+    <div class="profile-avatar">AS</div>
+    <div style="flex:1">
+      <div style="font-size:20px;font-weight:700;letter-spacing:-.3px">Arjun Sharma</div>
+      <div style="font-size:13px;color:var(--text2);margin:4px 0">arjun.sharma@email.com · Hyderabad, Telangana</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <span class="badge badge-purple"><i class="ti ti-crown"></i> Organizer</span>
+        <span class="badge badge-teal"><i class="ti ti-check"></i> Participant</span>
+        <span class="badge badge-blue"><i class="ti ti-shield-check"></i> Verified</span>
+      </div>
+    </div>
+    <button class="btn btn-sm"><i class="ti ti-edit"></i> Edit profile</button>
+  </div>
+  <div class="grid-2">
+    <div class="card card-pad">
+      <div class="section-title" style="font-size:15px;margin-bottom:1rem">Account details</div>
+      <div class="form-group"><label class="form-label">Full name</label><input class="form-control" value="Arjun Sharma"></div>
+      <div class="form-group"><label class="form-label">Bio</label><textarea class="form-control" rows="3">Tech enthusiast and community builder. Organizing workshops and hackathons in Hyderabad.</textarea></div>
+      <div class="form-group"><label class="form-label">Contact</label><input class="form-control" value="+91 98765 43210"></div>
+      <div class="form-group"><label class="form-label">Location</label><input class="form-control" value="Hyderabad, Telangana, India"></div>
+      <button class="btn btn-primary btn-sm">Save changes</button>
+    </div>
+    <div>
+      <div class="card card-pad" style="margin-bottom:1rem">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Activity summary</div>
+        <div class="list-item">
+          <div class="list-icon" style="background:var(--purple-light)"><i class="ti ti-calendar-event" style="color:var(--purple)"></i></div>
+          <div class="list-info"><div class="list-title">12 events organized</div><div class="list-sub">Since Jan 2025</div></div>
+          <span class="badge badge-purple">Organizer</span>
+        </div>
+        <div class="list-item">
+          <div class="list-icon" style="background:var(--teal-light)"><i class="ti ti-users" style="color:var(--teal)"></i></div>
+          <div class="list-info"><div class="list-title">347 total attendees</div><div class="list-sub">Across all events</div></div>
+          <span class="badge badge-teal">↑ 28%</span>
+        </div>
+        <div class="list-item">
+          <div class="list-icon" style="background:var(--amber-light)"><i class="ti ti-star" style="color:var(--amber)"></i></div>
+          <div class="list-info"><div class="list-title">4.7 average rating</div><div class="list-sub">From 89 reviews</div></div>
+          <span class="badge badge-amber">⭐⭐⭐⭐⭐</span>
+        </div>
+        <div class="list-item">
+          <div class="list-icon" style="background:var(--coral-light)"><i class="ti ti-certificate" style="color:var(--coral)"></i></div>
+          <div class="list-info"><div class="list-title">2 certificates earned</div><div class="list-sub">ML Bootcamp, React Summit</div></div>
+          <button class="btn btn-sm" onclick="openModal('certificate')">View</button>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Connected accounts</div>
+        <div class="list-item">
+          <div class="list-icon" style="background:#FEF3F2"><span style="font-size:18px">G</span></div>
+          <div class="list-info"><div class="list-title">Google</div><div class="list-sub">arjun.sharma@gmail.com</div></div>
+          <span class="badge badge-teal">Connected</span>
+        </div>
+        <div class="list-item">
+          <div class="list-icon" style="background:#EFF6FF"><i class="ti ti-brand-linkedin" style="color:#0A66C2"></i></div>
+          <div class="list-info"><div class="list-title">LinkedIn</div><div class="list-sub">Not connected</div></div>
+          <button class="btn btn-sm">Connect</button>
+        </div>
+        <div class="list-item" style="border-bottom:none">
+          <div class="list-icon" style="background:var(--bg3)"><i class="ti ti-brand-github"></i></div>
+          <div class="list-info"><div class="list-title">GitHub</div><div class="list-sub">Not connected</div></div>
+          <button class="btn btn-sm">Connect</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end flex:1 -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- EVENT DETAIL MODAL -->
+<div class="modal-backdrop" id="modal-eventDetail">
+  <div class="modal">
+    <div id="detailBanner" style="height:120px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative">
+      <div id="detailPriceBadge" style="position:absolute;top:12px;right:12px"></div>
+    </div>
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="detailTitle"></div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px" id="detailMeta"></div>
+      </div>
+      <button class="btn btn-icon btn-sm" onclick="closeModal('eventDetail')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+        <span class="badge badge-purple" id="detailCat"></span>
+        <span style="font-size:12px;color:var(--text2)" id="detailOrg"></span>
+      </div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1rem" id="detailDesc"></p>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:4px" id="detailCapacity"></div>
+      <div class="capacity-bar"><div class="capacity-fill" id="detailCapBar" style="width:0%"></div></div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn btn-primary" style="flex:1" id="regBtn" onclick="registerForEvent()">Register now</button>
+        <button class="btn" onclick="openFeedback()"><i class="ti ti-star"></i> Feedback</button>
+        <button class="btn" onclick="shareEvent()"><i class="ti ti-share"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-backdrop" id="modal-payment">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Complete registration</div>
+      <button class="btn btn-icon btn-sm" onclick="closeModal('payment')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--purple-light);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+        <div>
+          <div style="font-size:13px;font-weight:600" id="payEventTitle">Event Name</div>
+          <div style="font-size:11px;color:var(--text2)" id="payEventDate">Date</div>
+        </div>
+        <div style="font-size:20px;font-weight:700;color:var(--purple)" id="payEventPrice">₹299</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Payment method</label>
+        <div class="payment-methods">
+          <div class="pay-method active" onclick="selectPayMethod(this)"><i class="ti ti-credit-card"></i> Card</div>
+          <div class="pay-method" onclick="selectPayMethod(this)"><i class="ti ti-device-mobile"></i> UPI</div>
+          <div class="pay-method" onclick="selectPayMethod(this)"><i class="ti ti-building-bank"></i> Net banking</div>
+        </div>
+      </div>
+      <div id="cardFields">
+        <div class="form-group"><label class="form-label">Card number</label><input class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Expiry</label><input class="form-control" placeholder="MM / YY"></div>
+          <div class="form-group"><label class="form-label">CVV</label><input class="form-control" placeholder="•••" maxlength="3" type="password"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Name on card</label><input class="form-control" placeholder="Arjun Sharma"></div>
+      </div>
+      <div id="upiFields" style="display:none">
+        <div class="form-group"><label class="form-label">UPI ID</label><input class="form-control" placeholder="yourname@upi"></div>
+      </div>
+      <div id="netbankFields" style="display:none">
+        <div class="form-group"><label class="form-label">Select bank</label>
+          <select class="form-control"><option>SBI</option><option>HDFC</option><option>ICICI</option><option>Axis</option><option>Kotak</option></select>
+        </div>
+      </div>
+      <div style="background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:1rem;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px">
+        <i class="ti ti-lock" style="color:var(--teal)"></i>
+        Payments are secured with 256-bit encryption. Your card details are never stored.
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="completePayment()"><i class="ti ti-shield-check"></i> Pay & Register</button>
+    </div>
+  </div>
+</div>
+
+<!-- FEEDBACK MODAL -->
+<div class="modal-backdrop" id="modal-feedback">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Leave feedback</div>
+      <button class="btn btn-icon btn-sm" onclick="closeModal('feedback')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Your rating</label>
+        <div class="star-row" id="starRow">
+          <span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">What did you enjoy most?</label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px" id="feedbackTags"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Review</label><textarea class="form-control" rows="3" id="reviewText" placeholder="Share your experience…"></textarea></div>
+      <button class="btn btn-primary" style="width:100%" onclick="submitFeedback()">Submit feedback</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE EVENT MODAL -->
+<div class="modal-backdrop" id="modal-createEvent">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Create new event</div>
+      <button class="btn btn-icon btn-sm" onclick="closeModal('createEvent')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Event title *</label><input class="form-control" id="newTitle" placeholder="e.g. React Workshop 2026"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Date</label><input class="form-control" type="date"></div>
+        <div class="form-group"><label class="form-label">Time</label><input class="form-control" type="time"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-control"><option>Technology</option><option>Education</option><option>Business</option><option>Sports</option><option>Arts</option><option>Networking</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Location</label><input class="form-control" placeholder="Venue or 'Online'"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Capacity</label><input class="form-control" type="number" placeholder="50"></div>
+        <div class="form-group"><label class="form-label">Entry fee (INR, 0 = free)</label><input class="form-control" type="number" placeholder="0" id="newFee"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-control" rows="3" placeholder="Describe your event…"></textarea></div>
+      <button class="btn btn-primary" style="width:100%" onclick="createEventFromModal()"><i class="ti ti-rocket"></i> Publish event</button>
+    </div>
+  </div>
+</div>
+
+<!-- CERTIFICATE MODAL -->
+<div class="modal-backdrop" id="modal-certificate">
+  <div class="modal" style="width:540px">
+    <div class="modal-header">
+      <div class="modal-title">Attendance Certificate</div>
+      <button class="btn btn-icon btn-sm" onclick="closeModal('certificate')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="cert-preview" id="certPreview">
+        <div class="cert-border"></div>
+        <div class="cert-seal">🏆</div>
+        <div class="cert-title">Certificate of Attendance</div>
+        <div class="cert-name" id="certName">Arjun Sharma</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:.25rem">successfully attended</div>
+        <div class="cert-event" id="certEvent">Machine Learning Bootcamp</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:.75rem" id="certDate">June 15, 2026 · IIIT Hyderabad</div>
+        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.15);display:flex;justify-content:space-around;width:100%;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.05em;text-transform:uppercase">
+          <div style="text-align:center"><div style="font-size:18px;margin-bottom:4px">ML India</div>Organizer</div>
+          <div style="text-align:center"><div style="font-size:18px;margin-bottom:4px">EventHub</div>Platform</div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:1rem">
+        <label class="form-label">Select event</label>
+        <select class="form-control" onchange="updateCert(this.value)">
+          <option value="ML Bootcamp|Jun 8, 2026 · IIIT Hyderabad">Machine Learning Bootcamp</option>
+          <option value="React Summit 2026|May 15, 2026 · T-Hub Hyderabad">React Summit 2026</option>
+          <option value="AI Workshop|Apr 20, 2026 · Tech Hub">AI Workshop</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:.5rem">
+        <button class="btn btn-primary" style="flex:1" onclick="downloadCert()"><i class="ti ti-download"></i> Download PDF</button>
+        <button class="btn" onclick="shareCert()"><i class="ti ti-share"></i> Share</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="ti ti-check" style="color:var(--teal)"></i>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+// ===== DATA =====
+const EVENTS = [
+  {id:1,title:'Web Dev Workshop',cat:'Technology',emoji:'💻',date:'Jun 20',time:'10:00 AM',loc:'Tech Hub, Hyderabad',desc:'Hands-on workshop covering HTML, CSS, JavaScript and React. Perfect for beginners looking to kickstart their web development journey.',cap:60,reg:47,rating:4.8,org:'Ravi Kumar',price:0},
+  {id:2,title:'Startup Pitch Night',cat:'Business',emoji:'💼',date:'Jun 22',time:'6:00 PM',loc:'Startup Hub, Banjara Hills',desc:'Present your startup idea to a panel of investors and mentors. Network with fellow entrepreneurs in Hyderabad\'s growing startup ecosystem.',cap:80,reg:72,rating:4.6,org:'Priya Reddy',price:299},
+  {id:3,title:'Digital Photography Basics',cat:'Arts',emoji:'🎨',date:'Jun 25',time:'9:00 AM',loc:'Charminar Cultural Center',desc:'Learn composition, lighting, and editing fundamentals from award-winning photographer Anil Mehta.',cap:30,reg:18,rating:4.9,org:'Anil Mehta',price:499},
+  {id:4,title:'Python for Data Science',cat:'Technology',emoji:'💻',date:'Jun 28',time:'11:00 AM',loc:'Online',desc:'A 3-hour deep dive into Python libraries like Pandas, NumPy and Matplotlib for data analysis and visualization.',cap:100,reg:89,rating:4.7,org:'Dr. Kavya Singh',price:0},
+  {id:5,title:'Community 5K Run',cat:'Sports',emoji:'🏃',date:'Jul 2',time:'6:30 AM',loc:'Hussain Sagar Lake Trail',desc:'Join 300+ runners for our annual community 5K. All fitness levels welcome. Registration includes a finisher\'s medal.',cap:300,reg:214,rating:4.5,org:'Fitness Hyderabad',price:150},
+  {id:6,title:'Business Networking Mixer',cat:'Networking',emoji:'🤝',date:'Jul 5',time:'7:00 PM',loc:'The Park Hotel, Somajiguda',desc:'Structured networking session for professionals across industries. Speed networking format with curated connections.',cap:50,reg:31,rating:4.4,org:'BizConnect HYD',price:199},
+  {id:7,title:'Machine Learning Bootcamp',cat:'Education',emoji:'📚',date:'Jul 8',time:'9:00 AM',loc:'IIIT Hyderabad',desc:'Intensive 1-day bootcamp covering supervised learning, neural networks, and model deployment. Certificate provided.',cap:40,reg:40,rating:4.9,org:'ML India',price:999},
+  {id:8,title:'Women in Tech Panel',cat:'Technology',emoji:'💜',date:'Jul 10',time:'3:00 PM',loc:'T-Hub, Raidurgam',desc:'Inspiring panel discussion with women leaders from Amazon, Microsoft, and local startups sharing career insights.',cap:120,reg:67,rating:4.8,org:'WiT Hyderabad',price:0},
+];
+
+let currentEventId = null;
+let userRegistered = new Set([1,4]);
+let starRating = 0;
+let deferredPrompt = null;
+
+// ===== PWA =====
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+window.addEventListener('online', () => document.getElementById('offlineBar').classList.remove('show'));
+window.addEventListener('offline', () => document.getElementById('offlineBar').classList.add('show'));
+
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(r => {
+      if (r.outcome === 'accepted') showToast('EventHub installed successfully!');
+      deferredPrompt = null;
+    });
+  } else {
+    showToast('To install: use your browser menu → "Add to Home Screen"');
+  }
+}
+
+function dismissPWA(e) {
+  e.stopPropagation();
+  document.getElementById('pwaBanner').style.display = 'none';
+}
+
+// ===== NAVIGATION =====
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach((t, i) => {
+    const pages = ['browse','dashboard','analytics','calendar','notifs','profile'];
+    t.classList.toggle('active', pages[i] === p);
+  });
+  if (p === 'calendar') renderCalendar();
+  if (p === 'analytics') renderAnalytics();
+  if (p === 'dashboard') renderDashboard();
+}
+
+// ===== EVENT RENDERING =====
+function bannerBg(cat) {
+  const m = {Technology:'#EEEDFE',Education:'#E1F5EE',Business:'#FAEEDA',Sports:'#E1F5EE',Arts:'#FAECE7',Networking:'#E6F1FB'};
+  return m[cat] || '#F1EFE8';
+}
+
+function renderEvents() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const checks = [...document.querySelectorAll('.filter-option input[type=checkbox]')];
+  const cats = checks.filter(c => c.checked && c.id !== 'fFree' && c.id !== 'fPaid').map(c => c.closest('label').textContent.trim());
+  const showFree = document.getElementById('fFree').checked;
+  const showPaid = document.getElementById('fPaid').checked;
+
+  const filtered = EVENTS.filter(e => {
+    const matchQ = !q || e.title.toLowerCase().includes(q) || e.cat.toLowerCase().includes(q) || e.org.toLowerCase().includes(q);
+    const matchC = cats.some(c => e.cat === c);
+    const matchP = (showFree && e.price === 0) || (showPaid && e.price > 0);
+    return matchQ && matchC && matchP;
+  });
+
+  document.getElementById('eventGrid').innerHTML = filtered.length ? filtered.map(e => {
+    const pct = Math.round(e.reg / e.cap * 100);
+    const full = e.reg >= e.cap;
+    return `<div class="card" style="cursor:pointer;transition:box-shadow .15s" onmouseenter="this.style.boxShadow='var(--shadow-lg)'" onmouseleave="this.style.boxShadow=''" onclick="openDetail(${e.id})">
+      <div class="event-banner" style="background:${bannerBg(e.cat)}">${e.emoji}
+        ${e.price > 0 ? `<div class="paid-badge">₹${e.price}</div>` : '<div class="paid-badge" style="background:rgba(29,158,117,.8)">FREE</div>'}
+      </div>
+      <div class="event-body">
+        <div class="event-title">${e.title}</div>
+        <div class="event-meta">
+          <span><i class="ti ti-calendar" style="font-size:12px"></i> ${e.date} · ${e.time}</span>
+          <span><i class="ti ti-map-pin" style="font-size:12px"></i> ${e.loc}</span>
+          <span><i class="ti ti-user" style="font-size:12px"></i> ${e.org}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="badge badge-purple">${e.cat}</span>
+          <span style="font-size:11px;color:var(--text2)">★ ${e.rating}</span>
+        </div>
+        <div class="capacity-bar"><div class="capacity-fill" style="width:${pct}%;background:${full ? '#D85A30' : 'var(--purple)'}"></div></div>
+        <div class="event-footer">
+          <span style="font-size:11px;color:var(--text2)">${e.reg}/${e.cap} registered</span>
+          ${full ? '<span class="badge badge-coral">Full — waitlist</span>' : userRegistered.has(e.id) ? '<span class="badge badge-teal"><i class="ti ti-check"></i> Registered</span>' : `<span class="badge badge-purple">${e.price > 0 ? '₹' + e.price : 'Free'} · Register</span>`}
+        </div>
+      </div>
+    </div>`;
+  }).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-search-off"></i><p>No events match your filters.<br>Try adjusting your search.</p></div>`;
+}
+
+function filterEvents() { renderEvents(); }
+
+// ===== EVENT DETAIL =====
+function openDetail(id) {
+  const e = EVENTS.find(x => x.id === id);
+  currentEventId = id;
+  const pct = Math.round(e.reg / e.cap * 100);
+  document.getElementById('detailBanner').style.background = bannerBg(e.cat);
+  document.getElementById('detailBanner').childNodes[0].textContent = e.emoji;
+  document.getElementById('detailPriceBadge').innerHTML = e.price > 0
+    ? `<span style="background:rgba(0,0,0,.55);color:#fff;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px">₹${e.price}</span>`
+    : `<span style="background:rgba(29,158,117,.8);color:#fff;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px">FREE</span>`;
+  document.getElementById('detailTitle').textContent = e.title;
+  document.getElementById('detailMeta').textContent = `${e.date} · ${e.time} · ${e.loc}`;
+  document.getElementById('detailOrg').textContent = `by ${e.org}`;
+  document.getElementById('detailDesc').textContent = e.desc;
+  document.getElementById('detailCat').textContent = e.cat;
+  document.getElementById('detailCapacity').textContent = `${e.reg} of ${e.cap} spots taken`;
+  document.getElementById('detailCapBar').style.width = pct + '%';
+  const btn = document.getElementById('regBtn');
+  if (userRegistered.has(id)) { btn.textContent = 'Cancel registration'; btn.className = 'btn btn-danger'; btn.style.flex = '1'; }
+  else if (e.reg >= e.cap) { btn.textContent = 'Join waitlist'; btn.className = 'btn btn-primary'; btn.style.flex = '1'; }
+  else { btn.innerHTML = `<i class="ti ti-ticket"></i> ${e.price > 0 ? 'Buy ticket — ₹' + e.price : 'Register — Free'}`; btn.className = 'btn btn-primary'; btn.style.flex = '1'; }
+  openModal('eventDetail');
+}
+
+function registerForEvent() {
+  if (!currentEventId) return;
+  const e = EVENTS.find(x => x.id === currentEventId);
+  if (userRegistered.has(currentEventId)) {
+    userRegistered.delete(currentEventId);
+    e.reg = Math.max(0, e.reg - 1);
+    showToast('Registration cancelled for "' + e.title + '"');
+    closeModal('eventDetail');
+    renderEvents();
+  } else if (e.price > 0) {
+    closeModal('eventDetail');
+    document.getElementById('payEventTitle').textContent = e.title;
+    document.getElementById('payEventDate').textContent = e.date + ' · ' + e.loc;
+    document.getElementById('payEventPrice').textContent = '₹' + e.price;
+    openModal('payment');
+  } else {
+    userRegistered.add(currentEventId);
+    e.reg = Math.min(e.cap, e.reg + 1);
+    showToast('Registered for "' + e.title + '"! Check your notifications.');
+    addNotif('Registration confirmed: ' + e.title, 'Just now');
+    closeModal('eventDetail');
+    renderEvents();
+  }
+}
+
+function completePayment() {
+  const e = EVENTS.find(x => x.id === currentEventId);
+  userRegistered.add(currentEventId);
+  e.reg = Math.min(e.cap, e.reg + 1);
+  closeModal('payment');
+  showToast('Payment successful! Registered for "' + e.title + '"');
+  addNotif('Payment confirmed — ₹' + e.price + ' for ' + e.title, 'Just now');
+  renderEvents();
+}
+
+function shareEvent() {
+  const e = EVENTS.find(x => x.id === currentEventId);
+  if (navigator.share) {
+    navigator.share({ title: e.title, text: e.desc, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => showToast('Link copied to clipboard!'));
+  }
+}
+
+// ===== PAYMENT =====
+function selectPayMethod(el) {
+  document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('active'));
+  el.classList.add('active');
+  const txt = el.textContent.trim();
+  document.getElementById('cardFields').style.display = txt.includes('Card') ? 'block' : 'none';
+  document.getElementById('upiFields').style.display = txt.includes('UPI') ? 'block' : 'none';
+  document.getElementById('netbankFields').style.display = txt.includes('Net banking') ? 'block' : 'none';
+}
+
+function formatCard(input) {
+  let v = input.value.replace(/\D/g, '').substring(0, 16);
+  input.value = v.replace(/(.{4})/g, '$1 ').trim();
+}
+
+// ===== FEEDBACK =====
+function openFeedback() {
+  const tags = ['Great speaker','Well organized','Hands-on','Networking','Content quality','Venue'];
+  document.getElementById('feedbackTags').innerHTML = tags.map(t =>
+    `<span class="badge badge-purple" style="cursor:pointer;padding:5px 10px;font-size:11px" onclick="this.classList.toggle('badge-teal');this.classList.toggle('badge-purple')">${t}</span>`
+  ).join('');
+  closeModal('eventDetail');
+  openModal('feedback');
+}
+
+function setRating(n) {
+  starRating = n;
+  document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('lit', i < n));
+}
+
+function submitFeedback() {
+  if (!starRating) { showToast('Please select a rating.'); return; }
+  closeModal('feedback');
+  showToast('Feedback submitted — thank you!');
+  document.getElementById('reviewText').value = '';
+  starRating = 0;
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+}
+
+// ===== MODALS =====
+function openModal(id) { document.getElementById('modal-' + id).classList.add('open'); }
+function closeModal(id) { document.getElementById('modal-' + id).classList.remove('open'); }
+document.querySelectorAll('.modal-backdrop').forEach(bd => {
+  bd.addEventListener('click', e => { if (e.target === bd) bd.classList.remove('open'); });
+});
+
+function createEventFromModal() {
+  const title = document.getElementById('newTitle').value.trim();
+  if (!title) { showToast('Please enter an event title.'); return; }
+  closeModal('createEvent');
+  showToast('"' + title + '" published successfully!');
+  addNotif('Your event "' + title + '" is now live.', 'Just now');
+}
+
+// ===== TOAST =====
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ===== NOTIFICATIONS =====
+const NOTIFS = [
+  {text:'Your registration for "Web Dev Workshop" is confirmed.', time:'2 min ago', read:false},
+  {text:'Reminder: "Python for Data Science" is tomorrow at 11:00 AM.', time:'1 hour ago', read:false},
+  {text:'"Machine Learning Bootcamp" is now full. You\'re on the waitlist.', time:'3 hours ago', read:true},
+  {text:'New feedback received on your event "Startup Pitch Night".', time:'Yesterday', read:true},
+  {text:'"Community 5K Run" date has been updated to Jul 2.', time:'2 days ago', read:true},
+];
+
+function addNotif(text, time) { NOTIFS.unshift({text, time, read:false}); renderNotifs(); }
+
+function renderNotifs() {
+  document.getElementById('notifList').innerHTML = NOTIFS.map(n => `
+    <div class="notif-item">
+      <div class="notif-dot${n.read ? ' read' : ''}"></div>
+      <div>
+        <div class="notif-text">${n.text}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function markAllRead() {
+  NOTIFS.forEach(n => n.read = true);
+  renderNotifs();
+  showToast('All notifications marked as read');
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  document.getElementById('orgEventList').innerHTML = EVENTS.slice(0,4).map(e => {
+    const pct = Math.round(e.reg / e.cap * 100);
+    return `<div class="list-item">
+      <div class="list-icon" style="background:${bannerBg(e.cat)};font-size:17px">${e.emoji}</div>
+      <div class="list-info">
+        <div class="list-title">${e.title}</div>
+        <div class="list-sub">${e.reg}/${e.cap} registered · ${e.date}</div>
+        <div class="progress-mini"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <span style="font-size:11px;color:var(--text2)">★ ${e.rating}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('feedbackList').innerHTML = [
+    {name:'Priya M.',text:'Amazing workshop!',stars:5,event:'Web Dev Workshop'},
+    {name:'Rahul K.',text:'Very well organized.',stars:4,event:'Startup Pitch'},
+    {name:'Sneha P.',text:'Loved the hands-on sessions.',stars:5,event:'ML Bootcamp'},
+    {name:'Aryan S.',text:'Great speaker lineup.',stars:4,event:'Women in Tech'},
+  ].map(f => `<div class="list-item">
+    <div class="avatar">${f.name.split(' ').map(x=>x[0]).join('')}</div>
+    <div class="list-info">
+      <div class="list-title">${f.name} · ${'★'.repeat(f.stars)}${'☆'.repeat(5-f.stars)}</div>
+      <div class="list-sub">${f.text} · <em>${f.event}</em></div>
+    </div>
+  </div>`).join('');
+
+  document.getElementById('attendanceList').innerHTML = EVENTS.slice(0,5).map(e => `
+    <div class="attendance-row">
+      <div style="font-size:17px">${e.emoji}</div>
+      <div class="list-info">
+        <div class="list-title">${e.title}</div>
+        <div class="list-sub">${e.date} · ${e.reg} registered</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span style="font-size:11px;color:var(--text2)">${Math.round(e.reg * .85)} attended</span>
+        <button class="btn btn-sm" onclick="openModal('certificate')"><i class="ti ti-certificate"></i></button>
+        <div class="check-btn ${e.reg>0?'checked':''}" onclick="this.classList.toggle('checked')">
+          ${e.reg>0?'<i class="ti ti-check" style="font-size:12px"></i>':''}
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('partUpcoming').innerHTML = EVENTS.slice(0,3).map(e => `
+    <div class="list-item">
+      <div class="list-icon" style="background:${bannerBg(e.cat)};font-size:17px">${e.emoji}</div>
+      <div class="list-info"><div class="list-title">${e.title}</div><div class="list-sub">${e.date} · ${e.loc}</div></div>
+    </div>`).join('');
+
+  document.getElementById('partHistory').innerHTML = [
+    {emoji:'💻',title:'React Summit 2026',date:'May 15',status:'Attended',cert:true},
+    {emoji:'📚',title:'AI Workshop',date:'Apr 20',status:'Attended',cert:true},
+    {emoji:'🤝',title:'BizConnect April',date:'Apr 5',status:'Attended',cert:false},
+  ].map(h => `<div class="list-item">
+    <div class="list-icon" style="background:#E1F5EE;font-size:17px">${h.emoji}</div>
+    <div class="list-info"><div class="list-title">${h.title}</div><div class="list-sub">${h.date}</div></div>
+    <div style="display:flex;gap:6px">
+      ${h.cert ? `<button class="btn btn-sm" onclick="openModal('certificate')"><i class="ti ti-certificate"></i></button>` : ''}
+      <span class="badge badge-teal">${h.status}</span>
+    </div>
+  </div>`).join('');
+}
+
+function switchDash(role) {
+  document.getElementById('dash-org').style.display = role === 'org' ? 'block' : 'none';
+  document.getElementById('dash-part').style.display = role === 'part' ? 'block' : 'none';
+  document.getElementById('orgTab').classList.toggle('active', role === 'org');
+  document.getElementById('partTab').classList.toggle('active', role === 'part');
+}
+
+function exportAttendance() {
+  const csv = 'Event,Registered,Attended,Fill Rate\n' + EVENTS.slice(0,5).map(e =>
+    `"${e.title}",${e.reg},${Math.round(e.reg*.85)},${Math.round(e.reg/e.cap*100)}%`
+  ).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'attendance_report.csv';
+  a.click();
+  showToast('Attendance CSV downloaded');
+}
+
+// ===== CALENDAR =====
+function renderCalendar() {
+  const grid = document.getElementById('calGrid');
+  const days = [];
+  for (let i = 0; i < 0; i++) days.push({d:'',other:true});
+  for (let i = 1; i <= 30; i++) days.push({d:i,other:false});
+  const eventDays = {20:[EVENTS[0]],22:[EVENTS[1]],25:[EVENTS[2]],28:[EVENTS[3]],2:[EVENTS[4]],5:[EVENTS[5]]};
+  grid.innerHTML = days.map(({d,other}) => `
+    <div class="cal-day${other?' other-month':''}${d===15?' today':''}">
+      <div style="font-size:11px;color:${d===15?'var(--purple)':'var(--text2)'};font-weight:${d===15?600:400}">${d}</div>
+      ${(eventDays[d]||[]).map(e=>`<div class="cal-event${e.price>0?' paid':''}">${e.emoji} ${e.title.split(' ')[0]}</div>`).join('')}
+    </div>`).join('');
+
+  document.getElementById('upcomingList').innerHTML = EVENTS.slice(0,6).map(e => `
+    <div class="card" style="padding:.75rem 1rem;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="openDetail(${e.id})">
+      <div style="font-size:28px">${e.emoji}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">${e.title}</div>
+        <div style="font-size:11px;color:var(--text2)">${e.date} · ${e.time} · ${e.loc}</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        ${e.price > 0 ? `<span class="badge badge-amber">₹${e.price}</span>` : '<span class="badge badge-teal">Free</span>'}
+        ${userRegistered.has(e.id)?'<span class="badge badge-teal"><i class="ti ti-check"></i> Registered</span>':'<span class="badge badge-purple">Register</span>'}
+      </div>
+    </div>`).join('');
+}
+
+// ===== ANALYTICS =====
+let chartsInit = false;
+let regChartInst, revChartInst, catChartInst, satChartInst;
+
+function renderAnalytics() {
+  // Table
+  document.getElementById('analyticsTable').innerHTML = EVENTS.map(e => {
+    const pct = Math.round(e.reg / e.cap * 100);
+    const revenue = e.price * e.reg;
+    return `<tr>
+      <td><strong>${e.emoji} ${e.title}</strong></td>
+      <td><span class="badge badge-purple">${e.cat}</span></td>
+      <td>${e.reg}</td>
+      <td>${e.cap}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="progress-mini" style="width:60px"><div class="progress-fill" style="width:${pct}%;background:${pct>80?'var(--coral)':'var(--purple)'}"></div></div>
+          <span style="font-size:11px;color:var(--text2)">${pct}%</span>
+        </div>
+      </td>
+      <td>${revenue > 0 ? '₹' + revenue.toLocaleString() : '—'}</td>
+      <td>★ ${e.rating}</td>
+    </tr>`;
+  }).join('');
+
+  if (chartsInit) return;
+  chartsInit = true;
+
+  const palette = ['#534AB7','#1D9E75','#D85A30','#BA7517','#7C6FD4','#2563EB'];
+  const gridColor = 'rgba(83,74,183,.06)';
+  const textColor = '#9896B8';
+
+  const defaultOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1A1830', padding: 10, cornerRadius: 8 } },
+    scales: {
+      x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11 } } },
+      y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11 } } }
+    }
+  };
+
+  // Registrations over time
+  const days = Array.from({length:15},(_,i)=>`Jun ${i+1}`);
+  const regData = [4,7,12,8,15,22,18,31,25,29,40,36,44,38,47];
+  regChartInst = new Chart(document.getElementById('regChart'), {
+    type:'line',
+    data:{
+      labels:days,
+      datasets:[{
+        data:regData,
+        borderColor:'#534AB7',
+        backgroundColor:'rgba(83,74,183,.12)',
+        fill:true,
+        tension:.4,
+        pointBackgroundColor:'#534AB7',
+        pointRadius:3,
+        pointHoverRadius:5
+      }]
+    },
+    options:{...defaultOpts}
+  });
+
+  // Revenue by category
+  const revCats = ['Technology','Business','Arts','Sports','Networking','Education'];
+  const revData = [0,21528,8982,32100,6169,39960];
+  revChartInst = new Chart(document.getElementById('revChart'), {
+    type:'bar',
+    data:{
+      labels:revCats,
+      datasets:[{
+        data:revData,
+        backgroundColor:palette,
+        borderRadius:6
+      }]
+    },
+    options:{...defaultOpts,plugins:{...defaultOpts.plugins,tooltip:{...defaultOpts.plugins.tooltip,callbacks:{label:c=>'₹'+c.raw.toLocaleString()}}}}
+  });
+
+  // Category popularity (doughnut)
+  catChartInst = new Chart(document.getElementById('catChart'), {
+    type:'doughnut',
+    data:{
+      labels:['Technology','Education','Business','Sports','Arts','Networking'],
+      datasets:[{
+        data:[203,40,72,214,18,31],
+        backgroundColor:palette,
+        borderWidth:2,
+        borderColor:'#fff'
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:'right',labels:{color:textColor,font:{size:11},boxWidth:12}},
+        tooltip:{backgroundColor:'#1A1830',padding:10,cornerRadius:8}
+      }
+    }
+  });
+
+  // Satisfaction distribution
+  satChartInst = new Chart(document.getElementById('satChart'), {
+    type:'bar',
+    data:{
+      labels:['1★','2★','3★','4★','5★'],
+      datasets:[{
+        data:[2,3,8,28,48],
+        backgroundColor:['#D85A30','#BA7517','#6B6892','#1D9E75','#534AB7'],
+        borderRadius:6
+      }]
+    },
+    options:{
+      ...defaultOpts,
+      scales:{
+        x:{...defaultOpts.scales.x},
+        y:{...defaultOpts.scales.y,title:{display:true,text:'Responses',color:textColor,font:{size:11}}}
+      }
+    }
+  });
+}
+
+function exportAnalytics() {
+  const csv = 'Event,Category,Registrations,Capacity,Fill Rate,Revenue,Rating\n' + EVENTS.map(e =>
+    `"${e.title}","${e.cat}",${e.reg},${e.cap},${Math.round(e.reg/e.cap*100)}%,${e.price*e.reg},${e.rating}`
+  ).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'analytics_report.csv';
+  a.click();
+  showToast('Analytics CSV exported');
+}
+
+// ===== CERTIFICATES =====
+function updateCert(val) {
+  const [event, date] = val.split('|');
+  document.getElementById('certEvent').textContent = event;
+  document.getElementById('certDate').textContent = date;
+}
+
+function downloadCert() {
+  showToast('Certificate PDF generated & downloading…');
+  // In a real app, use a PDF library like jsPDF
+  setTimeout(() => {
+    const el = document.getElementById('certPreview');
+    const name = document.getElementById('certEvent').textContent;
+    // Simple SVG-based certificate export
+    const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="560">
+      <defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#1A1040"/><stop offset="50%" style="stop-color:#2D1B69"/><stop offset="100%" style="stop-color:#1A1040"/>
+      </linearGradient></defs>
+      <rect width="800" height="560" fill="url(#bg)" rx="20"/>
+      <rect x="16" y="16" width="768" height="528" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" rx="14"/>
+      <text x="400" y="100" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="rgba(255,255,255,0.5)" letter-spacing="4">CERTIFICATE OF ATTENDANCE</text>
+      <text x="400" y="200" text-anchor="middle" font-family="Georgia,serif" font-size="36" font-weight="bold" fill="white">${document.getElementById('certName').textContent}</text>
+      <text x="400" y="250" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="rgba(255,255,255,0.6)">successfully attended</text>
+      <text x="400" y="300" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#F5C842">${name}</text>
+      <text x="400" y="360" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="rgba(255,255,255,0.5)">${document.getElementById('certDate').textContent}</text>
+      <text x="400" y="470" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(255,255,255,0.3)">Issued by EventHub · Powered by Community</text>
+    </svg>`;
+    const blob = new Blob([svgData],{type:'image/svg+xml'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'certificate_' + name.replace(/\s+/g,'_') + '.svg';
+    a.click();
+  }, 500);
+}
+
+function shareCert() {
+  if (navigator.share) {
+    navigator.share({title:'My EventHub Certificate',text:'I attended '+ document.getElementById('certEvent').textContent + '!',url:window.location.href});
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => showToast('Certificate link copied!'));
+  }
+}
+
+// ===== INIT =====
+renderEvents();
+renderNotifs();
+renderDashboard();
+
+// PWA service worker registration
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'eventhub-v1';
+    const URLS = ['/'];
+    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS))));
+    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+    self.addEventListener('push', e => {
+      const data = e.data ? e.data.json() : {title:'EventHub',body:'New update available'};
+      e.waitUntil(self.registration.showNotification(data.title,{body:data.body,icon:'/icon.png'}));
+    });
+  `;
+  const swBlob = new Blob([swCode],{type:'application/javascript'});
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+</script>
+</body>
+</html>
