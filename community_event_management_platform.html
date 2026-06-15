@@ -1,0 +1,584 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--purple:#534AB7;--purple-light:#EEEDFE;--teal:#1D9E75;--teal-light:#E1F5EE;--coral:#D85A30;--coral-light:#FAECE7;--amber:#BA7517;--amber-light:#FAEEDA}
+body{font-family:var(--font-sans,sans-serif);background:var(--color-background-tertiary);color:var(--color-text-primary);min-height:100vh}
+.app{display:flex;flex-direction:column;min-height:100vh}
+nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1.5rem;display:flex;align-items:center;gap:1rem;height:52px;position:sticky;top:0;z-index:10}
+.nav-logo{font-size:15px;font-weight:500;color:var(--purple);display:flex;align-items:center;gap:6px;flex:1}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:5px 12px;border:none;background:transparent;color:var(--color-text-secondary);font-size:13px;cursor:pointer;border-radius:var(--border-radius-md);transition:all .15s}
+.nav-tab:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.nav-tab.active{background:var(--purple-light);color:var(--purple)}
+.nav-actions{display:flex;gap:8px;align-items:center}
+.btn{padding:6px 14px;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);transition:all .15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn-primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn-primary:hover{background:#3C3489;border-color:#3C3489}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-danger{background:var(--coral-light);color:var(--coral);border-color:#F0997B}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500}
+.badge-purple{background:var(--purple-light);color:var(--purple)}
+.badge-teal{background:var(--teal-light);color:#0F6E56}
+.badge-coral{background:var(--coral-light);color:#993C1D}
+.badge-amber{background:var(--amber-light);color:#854F0B}
+.page{display:none;padding:1.5rem;max-width:1100px;margin:0 auto;width:100%}
+.page.active{display:block}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.section-title{font-size:18px;font-weight:500}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:1.5rem}
+.metric-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem}
+.metric-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.metric-value{font-size:24px;font-weight:500}
+.metric-value.purple{color:var(--purple)}
+.metric-value.teal{color:var(--teal)}
+.metric-value.coral{color:var(--coral)}
+.metric-value.amber{color:var(--amber)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.event-banner{height:120px;display:flex;align-items:center;justify-content:center;font-size:32px}
+.event-body{padding:1rem}
+.event-title{font-size:15px;font-weight:500;margin-bottom:4px}
+.event-meta{font-size:12px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:2px;margin-bottom:10px}
+.event-meta span{display:flex;align-items:center;gap:4px}
+.event-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary)}
+.capacity-bar{background:var(--color-background-secondary);border-radius:99px;height:4px;margin:8px 0}
+.capacity-fill{height:4px;border-radius:99px;background:var(--purple)}
+.sidebar-layout{display:grid;grid-template-columns:240px 1fr;gap:1.5rem}
+.sidebar{display:flex;flex-direction:column;gap:12px}
+.filter-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem}
+.filter-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.filter-option{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer}
+.filter-option input{accent-color:var(--purple)}
+.search-bar{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 12px;display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+.search-bar input{border:none;background:transparent;outline:none;flex:1;font-size:14px;color:var(--color-text-primary)}
+.search-bar i{color:var(--color-text-secondary);font-size:16px}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);width:480px;max-width:90vw;max-height:80vh;overflow-y:auto}
+.modal-header{padding:1.25rem 1.25rem 0;display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.modal-title{font-size:16px;font-weight:500}
+.modal-body{padding:0 1.25rem 1.25rem}
+.form-group{margin-bottom:1rem}
+.form-label{font-size:13px;color:var(--color-text-secondary);margin-bottom:4px;display:block}
+.form-control{width:100%;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:14px;outline:none}
+.form-control:focus{border-color:var(--purple);box-shadow:0 0 0 2px rgba(83,74,183,.15)}
+select.form-control{cursor:pointer}
+.star-row{display:flex;gap:4px;margin:4px 0}
+.star{font-size:20px;cursor:pointer;color:var(--color-border-secondary);transition:color .1s}
+.star.lit{color:#EF9F27}
+.notif-item{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);margin-top:5px;flex-shrink:0}
+.notif-text{font-size:13px;color:var(--color-text-primary)}
+.notif-time{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-head{font-size:11px;color:var(--color-text-secondary);text-align:center;padding:4px}
+.cal-day{min-height:60px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:4px;font-size:12px}
+.cal-day.today{border-color:var(--purple)}
+.cal-day.other-month{opacity:.4}
+.cal-event{background:var(--purple-light);color:var(--purple);font-size:10px;padding:1px 4px;border-radius:3px;margin-top:2px;truncate:ellipsis;white-space:nowrap;overflow:hidden}
+.tab-bar{display:flex;gap:4px;margin-bottom:1rem;background:var(--color-background-secondary);padding:3px;border-radius:var(--border-radius-md);width:fit-content}
+.tab{padding:5px 14px;border-radius:calc(var(--border-radius-md) - 1px);font-size:13px;cursor:pointer;border:none;background:transparent;color:var(--color-text-secondary);transition:all .15s}
+.tab.active{background:var(--color-background-primary);color:var(--color-text-primary);border:0.5px solid var(--color-border-tertiary)}
+.list-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.list-item:last-child{border-bottom:none}
+.list-icon{width:36px;height:36px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.list-info{flex:1}
+.list-title{font-size:13px;font-weight:500}
+.list-sub{font-size:11px;color:var(--color-text-secondary)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--purple-light);color:var(--purple);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.profile-section{display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:1.5rem}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--purple-light);color:var(--purple);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:500;flex-shrink:0}
+.role-switch{display:flex;gap:4px;margin-bottom:1rem}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.75rem 1rem;font-size:13px;display:flex;align-items:center;gap:8px;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.08);transform:translateY(80px);opacity:0;transition:all .25s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-success i{color:var(--teal)}
+.progress-ring{position:relative;width:60px;height:60px}
+.progress-ring svg{transform:rotate(-90deg)}
+</style>
+
+<h2 class="sr-only">Community Event Management Platform — full-featured demo with event browsing, registration, dashboard, calendar, notifications, and profile management.</h2>
+
+<div class="app">
+<nav>
+  <div class="nav-logo"><i class="ti ti-calendar-event" aria-hidden="true"></i> EventHub</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('browse')"><i class="ti ti-layout-grid" aria-hidden="true"></i> Browse</button>
+    <button class="nav-tab" onclick="showPage('dashboard')"><i class="ti ti-chart-bar" aria-hidden="true"></i> Dashboard</button>
+    <button class="nav-tab" onclick="showPage('calendar')"><i class="ti ti-calendar" aria-hidden="true"></i> Calendar</button>
+    <button class="nav-tab" onclick="showPage('notifs')"><i class="ti ti-bell" aria-hidden="true"></i> Alerts</button>
+    <button class="nav-tab" onclick="showPage('profile')"><i class="ti ti-user" aria-hidden="true"></i> Profile</button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-primary btn-sm" onclick="openModal('createEvent')"><i class="ti ti-plus" aria-hidden="true"></i> New Event</button>
+  </div>
+</nav>
+
+<div style="flex:1">
+
+<!-- BROWSE PAGE -->
+<div id="page-browse" class="page active">
+  <div class="sidebar-layout">
+    <aside class="sidebar">
+      <div class="filter-card">
+        <div class="filter-title">Category</div>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Technology</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Education</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Business</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Sports</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Arts</label>
+        <label class="filter-option"><input type="checkbox" checked onchange="filterEvents()"> Networking</label>
+      </div>
+      <div class="filter-card">
+        <div class="filter-title">Date</div>
+        <label class="filter-option"><input type="radio" name="date" value="all" checked> All upcoming</label>
+        <label class="filter-option"><input type="radio" name="date" value="week"> This week</label>
+        <label class="filter-option"><input type="radio" name="date" value="month"> This month</label>
+      </div>
+      <div class="filter-card">
+        <div class="filter-title">Sort by</div>
+        <select class="form-control" style="font-size:13px">
+          <option>Date (soonest)</option>
+          <option>Popularity</option>
+          <option>Rating</option>
+        </select>
+      </div>
+    </aside>
+    <div>
+      <div class="search-bar">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="text" placeholder="Search events, organizers, topics..." oninput="filterEvents()" id="searchInput">
+      </div>
+      <div id="eventGrid" class="grid-3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div id="page-dashboard" class="page">
+  <div class="role-switch">
+    <button class="tab active" id="orgTab" onclick="switchDash('org')">Organizer view</button>
+    <button class="tab" id="partTab" onclick="switchDash('part')">Participant view</button>
+  </div>
+  <div id="dash-org">
+    <div class="grid-4">
+      <div class="metric-card"><div class="metric-label">Events created</div><div class="metric-value purple">12</div></div>
+      <div class="metric-card"><div class="metric-label">Active events</div><div class="metric-value teal">5</div></div>
+      <div class="metric-card"><div class="metric-label">Total registrations</div><div class="metric-value amber">347</div></div>
+      <div class="metric-card"><div class="metric-label">Avg rating</div><div class="metric-value coral">4.6 ★</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="card" style="padding:1rem">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Active events</div>
+        <div id="orgEventList"></div>
+      </div>
+      <div class="card" style="padding:1rem">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Recent feedback</div>
+        <div id="feedbackList"></div>
+      </div>
+    </div>
+  </div>
+  <div id="dash-part" style="display:none">
+    <div class="grid-4">
+      <div class="metric-card"><div class="metric-label">Registered events</div><div class="metric-value purple">8</div></div>
+      <div class="metric-card"><div class="metric-label">Attended</div><div class="metric-value teal">5</div></div>
+      <div class="metric-card"><div class="metric-label">Upcoming</div><div class="metric-value amber">3</div></div>
+      <div class="metric-card"><div class="metric-label">Certificates</div><div class="metric-value coral">2</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="card" style="padding:1rem">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Upcoming events</div>
+        <div id="partUpcoming"></div>
+      </div>
+      <div class="card" style="padding:1rem">
+        <div class="section-title" style="font-size:15px;margin-bottom:1rem">Event history</div>
+        <div id="partHistory"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDAR PAGE -->
+<div id="page-calendar" class="page">
+  <div class="section-header">
+    <div class="section-title">June 2026</div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-sm"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+      <button class="btn btn-sm"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+    </div>
+  </div>
+  <div class="card" style="padding:1rem">
+    <div class="calendar-grid">
+      <div class="cal-head">Sun</div><div class="cal-head">Mon</div><div class="cal-head">Tue</div><div class="cal-head">Wed</div><div class="cal-head">Thu</div><div class="cal-head">Fri</div><div class="cal-head">Sat</div>
+    </div>
+    <div class="calendar-grid" id="calGrid" style="margin-top:4px"></div>
+  </div>
+  <div style="margin-top:1rem">
+    <div class="section-title" style="margin-bottom:.75rem;font-size:15px">Upcoming this month</div>
+    <div id="upcomingList"></div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS PAGE -->
+<div id="page-notifs" class="page">
+  <div class="section-header">
+    <div class="section-title">Notifications</div>
+    <button class="btn btn-sm">Mark all read</button>
+  </div>
+  <div class="card" style="padding:0 1rem" id="notifList"></div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="page-profile" class="page">
+  <div class="profile-section">
+    <div class="profile-avatar">AS</div>
+    <div style="flex:1">
+      <div style="font-size:18px;font-weight:500">Arjun Sharma</div>
+      <div style="font-size:13px;color:var(--color-text-secondary);margin:4px 0">arjun.sharma@email.com · Hyderabad, India</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <span class="badge badge-purple">Organizer</span>
+        <span class="badge badge-teal">Participant</span>
+      </div>
+    </div>
+    <button class="btn btn-sm"><i class="ti ti-edit" aria-hidden="true"></i> Edit profile</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card" style="padding:1rem">
+      <div class="section-title" style="font-size:15px;margin-bottom:1rem">Account details</div>
+      <div class="form-group"><label class="form-label">Full name</label><input class="form-control" value="Arjun Sharma"></div>
+      <div class="form-group"><label class="form-label">Bio</label><textarea class="form-control" rows="3">Tech enthusiast and community builder. Organizing workshops and hackathons in Hyderabad.</textarea></div>
+      <div class="form-group"><label class="form-label">Contact</label><input class="form-control" value="+91 98765 43210"></div>
+      <button class="btn btn-primary btn-sm">Save changes</button>
+    </div>
+    <div class="card" style="padding:1rem">
+      <div class="section-title" style="font-size:15px;margin-bottom:1rem">Activity summary</div>
+      <div class="list-item">
+        <div class="list-icon" style="background:var(--purple-light)"><i class="ti ti-calendar-event" style="color:var(--purple)" aria-hidden="true"></i></div>
+        <div class="list-info"><div class="list-title">12 events organized</div><div class="list-sub">Since Jan 2025</div></div>
+      </div>
+      <div class="list-item">
+        <div class="list-icon" style="background:var(--teal-light)"><i class="ti ti-users" style="color:var(--teal)" aria-hidden="true"></i></div>
+        <div class="list-info"><div class="list-title">347 total attendees</div><div class="list-sub">Across all events</div></div>
+      </div>
+      <div class="list-item">
+        <div class="list-icon" style="background:var(--amber-light)"><i class="ti ti-star" style="color:var(--amber)" aria-hidden="true"></i></div>
+        <div class="list-info"><div class="list-title">4.6 avg rating</div><div class="list-sub">From 89 reviews</div></div>
+      </div>
+      <div class="list-item">
+        <div class="list-icon" style="background:var(--coral-light)"><i class="ti ti-certificate" style="color:var(--coral)" aria-hidden="true"></i></div>
+        <div class="list-info"><div class="list-title">2 certificates earned</div><div class="list-sub">As participant</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- CREATE EVENT MODAL -->
+<div class="modal-backdrop" id="modal-createEvent">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Create new event</div>
+      <button class="btn btn-sm" onclick="closeModal('createEvent')"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Event title</label><input class="form-control" placeholder="e.g. Web Development Workshop"></div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-control">
+          <option>Technology</option><option>Education</option><option>Business</option><option>Sports</option><option>Arts & Culture</option><option>Networking</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-group"><label class="form-label">Date</label><input class="form-control" type="date"></div>
+        <div class="form-group"><label class="form-label">Time</label><input class="form-control" type="time"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Location</label><input class="form-control" placeholder="Venue or Online"></div>
+      <div class="form-group"><label class="form-label">Capacity</label><input class="form-control" type="number" placeholder="50"></div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-control" rows="3" placeholder="What will attendees learn or experience?"></textarea></div>
+      <div class="form-group"><label class="form-label">Event banner</label>
+        <select class="form-control" id="bannerPick">
+          <option value="💻">💻 Technology</option><option value="📚">📚 Education</option><option value="💼">💼 Business</option><option value="⚽">⚽ Sports</option><option value="🎨">🎨 Arts</option><option value="🤝">🤝 Networking</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="createEventFromModal()">Publish event</button>
+    </div>
+  </div>
+</div>
+
+<!-- EVENT DETAIL MODAL -->
+<div class="modal-backdrop" id="modal-eventDetail">
+  <div class="modal">
+    <div id="detailBanner" style="height:100px;display:flex;align-items:center;justify-content:center;font-size:48px"></div>
+    <div class="modal-header" style="margin-bottom:0">
+      <div>
+        <div class="modal-title" id="detailTitle"></div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px" id="detailMeta"></div>
+      </div>
+      <button class="btn btn-sm" onclick="closeModal('eventDetail')"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
+    <div class="modal-body" style="margin-top:1rem">
+      <div id="detailDesc" style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem"></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:1rem">
+        <span class="badge badge-purple" id="detailCat"></span>
+        <span style="font-size:12px;color:var(--color-text-secondary)" id="detailCapacity"></span>
+      </div>
+      <div class="capacity-bar"><div class="capacity-fill" id="detailCapBar"></div></div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn btn-primary" style="flex:1" id="regBtn" onclick="registerForEvent()">Register now</button>
+        <button class="btn" onclick="openFeedback()"><i class="ti ti-star" aria-hidden="true"></i> Feedback</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEEDBACK MODAL -->
+<div class="modal-backdrop" id="modal-feedback">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Leave feedback</div>
+      <button class="btn btn-sm" onclick="closeModal('feedback')"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Your rating</label>
+        <div class="star-row" id="starRow">
+          <span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Review</label><textarea class="form-control" rows="3" id="reviewText" placeholder="What did you think of this event?"></textarea></div>
+      <button class="btn btn-primary" style="width:100%" onclick="submitFeedback()">Submit feedback</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="ti ti-check" style="color:var(--teal)" aria-hidden="true"></i>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+const EVENTS = [
+  {id:1,title:'Web Dev Workshop',cat:'Technology',emoji:'💻',date:'Jun 20',time:'10:00 AM',loc:'Tech Hub, Hyderabad',desc:'Hands-on workshop covering HTML, CSS, JavaScript and React. Perfect for beginners looking to kickstart their web development journey.',cap:60,reg:47,rating:4.8,org:'Ravi Kumar'},
+  {id:2,title:'Startup Pitch Night',cat:'Business',emoji:'💼',date:'Jun 22',time:'6:00 PM',loc:'Startup Hub, Banjara Hills',desc:'Present your startup idea to a panel of investors and mentors. Network with fellow entrepreneurs in Hyderabad\'s growing startup ecosystem.',cap:80,reg:72,rating:4.6,org:'Priya Reddy'},
+  {id:3,title:'Digital Photography Basics',cat:'Arts',emoji:'🎨',date:'Jun 25',time:'9:00 AM',loc:'Charminar Cultural Center',desc:'Learn composition, lighting, and editing fundamentals from award-winning photographer Anil Mehta. Bring your camera!',cap:30,reg:18,rating:4.9,org:'Anil Mehta'},
+  {id:4,title:'Python for Data Science',cat:'Technology',emoji:'💻',date:'Jun 28',time:'11:00 AM',loc:'Online',desc:'A 3-hour deep dive into Python libraries like Pandas, NumPy and Matplotlib for data analysis and visualization.',cap:100,reg:89,rating:4.7,org:'Dr. Kavya Singh'},
+  {id:5,title:'Community 5K Run',cat:'Sports',emoji:'⚽',date:'Jul 2',time:'6:30 AM',loc:'Hussain Sagar Lake Trail',desc:'Join 300+ runners for our annual community 5K. All fitness levels welcome. Registration includes a finisher\'s medal.',cap:300,reg:214,rating:4.5,org:'Fitness Hyderabad'},
+  {id:6,title:'Business Networking Mixer',cat:'Networking',emoji:'🤝',date:'Jul 5',time:'7:00 PM',loc:'The Park Hotel, Somajiguda',desc:'Structured networking session for professionals across industries. Speed networking format with curated connections.',cap:50,reg:31,rating:4.4,org:'BizConnect HYD'},
+  {id:7,title:'Machine Learning Bootcamp',cat:'Education',emoji:'📚',date:'Jul 8',time:'9:00 AM',loc:'IIIT Hyderabad',desc:'Intensive 1-day bootcamp covering supervised learning, neural networks, and model deployment. Certificate provided.',cap:40,reg:40,rating:4.9,org:'ML India'},
+  {id:8,title:'Women in Tech Panel',cat:'Technology',emoji:'💻',date:'Jul 10',time:'3:00 PM',loc:'T-Hub, Raidurgam',desc:'Inspiring panel discussion with women leaders from Amazon, Microsoft, and local startups sharing career insights.',cap:120,reg:67,rating:4.8,org:'WiT Hyderabad'},
+];
+let currentEventId = null;
+let userRegistered = new Set([1,4]);
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{
+    const pages=['browse','dashboard','calendar','notifs','profile'];
+    t.classList.toggle('active', pages[i]===p);
+  });
+  if(p==='calendar')renderCalendar();
+}
+
+function bannerBg(cat){
+  const m={Technology:'#EEEDFE',Education:'#E1F5EE',Business:'#FAEEDA',Sports:'#E1F5EE',Arts:'#FAECE7',Networking:'#E6F1FB'};
+  return m[cat]||'#F1EFE8';
+}
+
+function renderEvents(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const checks=[...document.querySelectorAll('.filter-option input[type=checkbox]')];
+  const cats=checks.filter(c=>c.checked).map(c=>c.closest('label').textContent.trim());
+  const filtered=EVENTS.filter(e=>{
+    const matchQ=!q||e.title.toLowerCase().includes(q)||e.cat.toLowerCase().includes(q)||e.org.toLowerCase().includes(q);
+    const matchC=cats.some(c=>e.cat.includes(c)||c.includes(e.cat)||
+      (c==='Arts'&&e.cat==='Arts')||(c==='Technology'&&e.cat==='Technology'));
+    return matchQ && matchC;
+  });
+  document.getElementById('eventGrid').innerHTML=filtered.map(e=>{
+    const pct=Math.round(e.reg/e.cap*100);
+    const full=e.reg>=e.cap;
+    return `<div class="card" style="cursor:pointer" onclick="openDetail(${e.id})">
+      <div class="event-banner" style="background:${bannerBg(e.cat)}">${e.emoji}</div>
+      <div class="event-body">
+        <div class="event-title">${e.title}</div>
+        <div class="event-meta">
+          <span><i class="ti ti-calendar" style="font-size:12px" aria-hidden="true"></i> ${e.date} · ${e.time}</span>
+          <span><i class="ti ti-map-pin" style="font-size:12px" aria-hidden="true"></i> ${e.loc}</span>
+          <span><i class="ti ti-user" style="font-size:12px" aria-hidden="true"></i> ${e.org}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="badge badge-purple">${e.cat}</span>
+          <span style="font-size:11px;color:var(--color-text-secondary)">★ ${e.rating}</span>
+        </div>
+        <div class="capacity-bar"><div class="capacity-fill" style="width:${pct}%;background:${full?'#D85A30':'var(--purple)'}"></div></div>
+        <div class="event-footer">
+          <span style="font-size:11px;color:var(--color-text-secondary)">${e.reg}/${e.cap} registered</span>
+          ${full?'<span class="badge badge-coral">Full</span>':userRegistered.has(e.id)?'<span class="badge badge-teal"><i class="ti ti-check" aria-hidden="true"></i> Registered</span>':'<span class="badge badge-purple">Register</span>'}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterEvents(){renderEvents();}
+
+function openDetail(id){
+  const e=EVENTS.find(x=>x.id===id);
+  currentEventId=id;
+  const pct=Math.round(e.reg/e.cap*100);
+  document.getElementById('detailBanner').style.background=bannerBg(e.cat);
+  document.getElementById('detailBanner').textContent=e.emoji;
+  document.getElementById('detailTitle').textContent=e.title;
+  document.getElementById('detailMeta').textContent=`${e.date} · ${e.time} · ${e.loc}`;
+  document.getElementById('detailDesc').textContent=e.desc;
+  document.getElementById('detailCat').textContent=e.cat;
+  document.getElementById('detailCapacity').textContent=`${e.reg} of ${e.cap} spots taken`;
+  document.getElementById('detailCapBar').style.width=pct+'%';
+  const btn=document.getElementById('regBtn');
+  if(userRegistered.has(id)){btn.textContent='Cancel registration';btn.className='btn btn-danger';}
+  else if(e.reg>=e.cap){btn.textContent='Join waitlist';btn.className='btn btn-primary';}
+  else{btn.textContent='Register now';btn.className='btn btn-primary';}
+  openModal('eventDetail');
+}
+
+function registerForEvent(){
+  if(!currentEventId)return;
+  const e=EVENTS.find(x=>x.id===currentEventId);
+  if(userRegistered.has(currentEventId)){
+    userRegistered.delete(currentEventId);
+    e.reg=Math.max(0,e.reg-1);
+    showToast('Registration cancelled for "'+e.title+'"');
+  } else {
+    userRegistered.add(currentEventId);
+    e.reg=Math.min(e.cap,e.reg+1);
+    showToast('Registered for "'+e.title+'"! Check your notifications.');
+    addNotif('Registration confirmed: '+e.title,'Just now');
+  }
+  closeModal('eventDetail');
+  renderEvents();
+}
+
+function openFeedback(){closeModal('eventDetail');openModal('feedback');}
+
+let starRating=0;
+function setRating(n){
+  starRating=n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));
+}
+
+function submitFeedback(){
+  const txt=document.getElementById('reviewText').value;
+  if(!starRating){showToast('Please select a rating.');return;}
+  closeModal('feedback');
+  showToast('Feedback submitted — thank you!');
+  document.getElementById('reviewText').value='';
+  starRating=0;
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('lit'));
+}
+
+function openModal(id){document.getElementById('modal-'+id).classList.add('open');}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');}
+
+function createEventFromModal(){
+  const title=document.querySelector('#modal-createEvent .form-control').value.trim();
+  if(!title){showToast('Please enter an event title.');return;}
+  closeModal('createEvent');
+  showToast('"'+title+'" published successfully!');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+const NOTIFS=[
+  {text:'Your registration for "Web Dev Workshop" is confirmed.', time:'2 min ago'},
+  {text:'Reminder: "Python for Data Science" is tomorrow at 11:00 AM.',time:'1 hour ago'},
+  {text:'"Machine Learning Bootcamp" is now full. You\'re on the waitlist.',time:'3 hours ago'},
+  {text:'New feedback received on your event "Startup Pitch Night".',time:'Yesterday'},
+  {text:'"Community 5K Run" date has been updated to Jul 2.',time:'2 days ago'},
+];
+
+function addNotif(text,time){NOTIFS.unshift({text,time});renderNotifs();}
+
+function renderNotifs(){
+  document.getElementById('notifList').innerHTML=NOTIFS.map(n=>`
+    <div class="notif-item">
+      <div class="notif-dot"></div>
+      <div><div class="notif-text">${n.text}</div><div class="notif-time">${n.time}</div></div>
+    </div>`).join('');
+}
+
+function renderDashboard(){
+  document.getElementById('orgEventList').innerHTML=EVENTS.slice(0,4).map(e=>`
+    <div class="list-item">
+      <div class="list-icon" style="background:${bannerBg(e.cat)};font-size:18px">${e.emoji}</div>
+      <div class="list-info"><div class="list-title">${e.title}</div><div class="list-sub">${e.reg}/${e.cap} · ${e.date}</div></div>
+      <span style="font-size:11px;color:var(--color-text-secondary)">★ ${e.rating}</span>
+    </div>`).join('');
+  document.getElementById('feedbackList').innerHTML=[
+    {name:'Priya M.',text:'Amazing workshop!',stars:5,event:'Web Dev Workshop'},
+    {name:'Rahul K.',text:'Very well organized.',stars:4,event:'Startup Pitch Night'},
+    {name:'Sneha P.',text:'Loved the hands-on sessions.',stars:5,event:'ML Bootcamp'},
+    {name:'Aryan S.',text:'Great speaker lineup.',stars:4,event:'Women in Tech'},
+  ].map(f=>`
+    <div class="list-item">
+      <div class="avatar">${f.name.split(' ').map(x=>x[0]).join('')}</div>
+      <div class="list-info">
+        <div class="list-title">${f.name} · ${'★'.repeat(f.stars)}</div>
+        <div class="list-sub">${f.text} · <em>${f.event}</em></div>
+      </div>
+    </div>`).join('');
+  document.getElementById('partUpcoming').innerHTML=EVENTS.slice(0,3).map(e=>`
+    <div class="list-item">
+      <div class="list-icon" style="background:${bannerBg(e.cat)};font-size:18px">${e.emoji}</div>
+      <div class="list-info"><div class="list-title">${e.title}</div><div class="list-sub">${e.date} · ${e.loc}</div></div>
+    </div>`).join('');
+  document.getElementById('partHistory').innerHTML=[
+    {emoji:'💻',title:'React Summit 2026',date:'May 15',status:'Attended'},
+    {emoji:'📚',title:'AI Workshop',date:'Apr 20',status:'Attended'},
+    {emoji:'🤝',title:'BizConnect April',date:'Apr 5',status:'Attended'},
+  ].map(h=>`
+    <div class="list-item">
+      <div class="list-icon" style="background:#E1F5EE;font-size:18px">${h.emoji}</div>
+      <div class="list-info"><div class="list-title">${h.title}</div><div class="list-sub">${h.date}</div></div>
+      <span class="badge badge-teal">${h.status}</span>
+    </div>`).join('');
+}
+
+function switchDash(role){
+  document.getElementById('dash-org').style.display=role==='org'?'block':'none';
+  document.getElementById('dash-part').style.display=role==='part'?'block':'none';
+  document.getElementById('orgTab').classList.toggle('active',role==='org');
+  document.getElementById('partTab').classList.toggle('active',role==='part');
+}
+
+function renderCalendar(){
+  const grid=document.getElementById('calGrid');
+  const days=[];
+  const startDay=0;
+  for(let i=0;i<startDay;i++)days.push({d:'',other:true});
+  for(let i=1;i<=30;i++)days.push({d:i,other:false});
+  const eventDays={20:[EVENTS[0]],22:[EVENTS[1]],25:[EVENTS[2]],28:[EVENTS[3]]};
+  grid.innerHTML=days.map(({d,other})=>`
+    <div class="cal-day${other?' other-month':''}${d===15?' today':''}">
+      <div style="font-size:11px;color:${d===15?'var(--purple)':'var(--color-text-secondary)'};font-weight:${d===15?500:400}">${d}</div>
+      ${(eventDays[d]||[]).map(e=>`<div class="cal-event">${e.emoji} ${e.title.split(' ')[0]}</div>`).join('')}
+    </div>`).join('');
+  document.getElementById('upcomingList').innerHTML=EVENTS.slice(0,5).map(e=>`
+    <div class="card" style="padding:.75rem 1rem;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="openDetail(${e.id})">
+      <div style="font-size:28px">${e.emoji}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:500">${e.title}</div><div style="font-size:11px;color:var(--color-text-secondary)">${e.date} · ${e.time} · ${e.loc}</div></div>
+      ${userRegistered.has(e.id)?'<span class="badge badge-teal"><i class="ti ti-check" aria-hidden="true"></i> Registered</span>':'<span class="badge badge-purple">Register</span>'}
+    </div>`).join('');
+}
+
+renderEvents();
+renderNotifs();
+renderDashboard();
+</script>
